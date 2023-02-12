@@ -66,6 +66,8 @@ int CWindow::Run()
 	m_mainTimer.Reset();
 	m_mainTimer.Start();
 
+	float frameCounter = 0.0f;
+
 	while (!m_ExitFlag && msg.message != WM_QUIT) 
 	{
 
@@ -85,10 +87,17 @@ int CWindow::Run()
 			{
 				m_logicCallback(deltaT);
 			}
+			
+			frameCounter += deltaT;
 
-			PreRender();
-			Present();
-			PostRender();
+			if (frameCounter > (1.0f  / 70.0f))
+			{
+				PreRender();
+				Present();
+				PostRender();
+
+				frameCounter = 0.0f;
+			}
 
 		}
 
@@ -114,8 +123,28 @@ LRESULT CWindow::MsgProc(HWND const hWnd, UINT const msg, WPARAM const wParam, L
 			break;
 
 		case WM_KEYUP:
-			break;
+			{
+			switch (wParam)
+			{
+			case VK_ESCAPE:
+				::PostQuitMessage(0);
+				break;
+			case 0x31: //1
+				break;
+			case 0x32: //2
+				break;
+			case 0x33: //3
+				break;
+			case 0x34: //4
+				break;
+			case 0x35: //5
+				break;
+			default:
+				break;
+			}
 
+			}
+			break;
 		case WM_MOUSEMOVE:
 			break;
 

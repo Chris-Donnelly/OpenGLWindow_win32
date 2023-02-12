@@ -30,8 +30,9 @@ protected:
 
 private:
 
-	bool SetPF();
-	void SetRenderDefaults();
+	bool  SetPF();
+	void  SetRenderDefaults();
+	float GetRefreshRate(float defaultRefresh = 60.0f);
 
 	inline void ClearBuffers()
 	{
@@ -40,4 +41,5 @@ private:
 
 	HGLRC           m_hRC;
 	HDC             m_hDC;
+	float           m_displayRefresh;
 };

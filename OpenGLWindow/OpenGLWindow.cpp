@@ -3,7 +3,7 @@
 #pragma comment (lib, "OpenGL32.lib")
 
 COpenGLWindow::COpenGLWindow(uint32_t xPos, uint32_t yPos, uint32_t width, uint32_t height, std::wstring title, LOGICFUNC callback) 
-	: CWindow(xPos, yPos, width, height, title, callback), m_hRC(0), m_hDC(::GetDC(m_Hwnd))
+	: CWindow(xPos, yPos, width, height, title, callback), m_hRC(0), m_hDC(::GetDC(m_Hwnd)), m_displayRefresh(GetRefreshRate())
 {
 	if (!InitRenderer())
 	{
@@ -53,7 +53,7 @@ bool COpenGLWindow::SetPF()
 
 void COpenGLWindow::SetRenderDefaults()
 {
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
 	glClearDepth(1.0f);
 
 	glEnable(GL_BLEND);
@@ -61,4 +61,25 @@ void COpenGLWindow::SetRenderDefaults()
 	glEnable(GL_BLEND);
 	glEnable(GL_LINE_SMOOTH);
 	glDepthMask(false);
+}
+
+float COpenGLWindow::GetRefreshRate(float defaultRefresh)
+{
+	float refresh = defaultRefresh;
+
+	MONITORINFOEX monInfo;
+	std::memset(&monInfo, 0, sizeof(MONITORINFOEX));
+	monInfo.cbSize = sizeof(MONITORINFOEX);
+
+	if (::GetMonitorInfo(::MonitorFromWindow(m_Hwnd, MONITOR_DEFAULTTOPRIMARY), &monInfo))
+	{
+		DEVMODE devMode;
+		std::memset(&devMode, 0, sizeof(DEVMODE));
+		devMode.dmSize = sizeof(DEVMODE);
+
+		::EnumDisplaySettings(monInfo.szDevice, ENUM_CURRENT_SETTINGS, &devMode);
+		refresh = static_cast<float>(devMode.dmDisplayFrequency);
+	}
+
+	return refresh;
 }
